@@ -46,7 +46,7 @@ class Game extends React.Component {
     });
   }
 
-  listMoves(history, clickedSquares) {
+  listMoves(history) {
     const moves = history.map((step, move) => {
       //Determine the player
       let player;
@@ -64,16 +64,34 @@ class Game extends React.Component {
       } else {
         desc = "Go to move #" + move;
         // Determine the row/col
-        let { row, col } = determineRowCol(clickedSquares[move - 1]);
-        moveDesc = `Player ${player} moved row:${row}, col:${col}`;
+        let { row, col } = determineRowCol(this.state.clickedSquares[move - 1]);
+        moveDesc = `Player ${player} moved col:${col}, row:${row}`;
       }
 
-      return (
-        <li key={move}>
-          <span>{moveDesc}</span>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
-        </li>
-      );
+      var is_bold;
+      if (this.state.stepNumber === move) {
+        is_bold = true;
+      } else {
+        is_bold = false;
+      }
+
+      if (is_bold) {
+        return (
+          <li key={move}>
+            <span>
+              <strong>{moveDesc}</strong>
+            </span>
+            <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          </li>
+        );
+      } else {
+        return (
+          <li key={move}>
+            <span>{moveDesc}</span>
+            <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          </li>
+        );
+      }
     });
 
     return moves;
@@ -83,9 +101,8 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
-    const clickedSquares = this.state.clickedSquares;
 
-    const moves = this.listMoves(history, clickedSquares);
+    const moves = this.listMoves(history);
 
     let status;
     if (winner) {
