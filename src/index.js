@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Board from "./board.js";
-import calculateWinner from "./utils.js";
+import { calculateWinner, determineRowCol } from "./utils.js";
 import "./index.css";
 
 class Game extends React.Component {
@@ -14,7 +14,8 @@ class Game extends React.Component {
         }
       ],
       xIsNext: true,
-      stepNumber: 0
+      stepNumber: 0,
+      clickedSquares: []
     };
   }
 
@@ -22,16 +23,19 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
+    const clickedSquares = this.state.clickedSquares.slice();
 
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
     squares[i] = this.state.xIsNext ? "X" : "O";
+    clickedSquares[this.state.stepNumber] = i;
 
     this.setState({
       history: history.concat([{ squares: squares }]),
       xIsNext: !this.state.xIsNext,
-      stepNumber: history.length
+      stepNumber: history.length,
+      clickedSquares: clickedSquares
     });
   }
 
@@ -42,19 +46,46 @@ class Game extends React.Component {
     });
   }
 
-  render() {
-    const history = this.state.history;
-    const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
-
+  listMoves(history, clickedSquares) {
     const moves = history.map((step, move) => {
-      const desc = move ? "Go to move #" + move : "Go to game start";
+      //Determine the player
+      let player;
+      if (move % 2 === 0) {
+        player = "O";
+      } else {
+        player = "X";
+      }
+
+      // Button Description
+      let desc, moveDesc;
+      if (move === 0) {
+        desc = "Go to game start";
+        moveDesc = "";
+      } else {
+        desc = "Go to move #" + move;
+        // Determine the row/col
+        let { row, col } = determineRowCol(clickedSquares[move - 1]);
+        moveDesc = `Player ${player} moved row:${row}, col:${col}`;
+      }
+
       return (
         <li key={move}>
+          <span>{moveDesc}</span>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
         </li>
       );
     });
+
+    return moves;
+  }
+
+  render() {
+    const history = this.state.history;
+    const current = history[this.state.stepNumber];
+    const winner = calculateWinner(current.squares);
+    const clickedSquares = this.state.clickedSquares;
+
+    const moves = this.listMoves(history, clickedSquares);
 
     let status;
     if (winner) {
