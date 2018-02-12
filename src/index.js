@@ -77,12 +77,12 @@ class Game extends React.Component {
 
       if (is_bold) {
         return (
-          <li key={move}>
-            <span>
-              <strong>{moveDesc}</strong>
-            </span>
-            <button onClick={() => this.jumpTo(move)}>{desc}</button>
-          </li>
+          <strong>
+            <li key={move}>
+              <span>{moveDesc}</span>
+              <button onClick={() => this.jumpTo(move)}>{desc}</button>
+            </li>
+          </strong>
         );
       } else {
         return (
