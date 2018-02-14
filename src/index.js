@@ -35,7 +35,14 @@ class Game extends React.Component {
       history: history.concat([{ squares: squares }]),
       xIsNext: !this.state.xIsNext,
       stepNumber: history.length,
-      clickedSquares: clickedSquares
+      clickedSquares: clickedSquares,
+      isAscending: true
+    });
+  }
+
+  handleToggle() {
+    this.setState({
+      isAscending: !this.state.isAscending
     });
   }
 
@@ -101,9 +108,16 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
+    const isAscending = this.state.isAscending;
 
-    const moves = this.listMoves(history);
+    var moves = this.listMoves(history);
 
+    // Toggle to sort ascending / descending list
+    if (!isAscending) {
+      moves = moves.slice().reverse();
+    }
+
+    // Status message
     let status;
     if (winner) {
       status = `Winner: ${winner}`;
@@ -116,8 +130,9 @@ class Game extends React.Component {
           <Board squares={current.squares} onClick={i => this.handleClick(i)} />
         </div>
         <div className="game-info">
+          <button onClick={() => this.handleToggle()}>Toggle Move Order</button>
           <div>{status}</div>
-          <ol>{moves}</ol>
+          <ul>{moves}</ul>
         </div>
       </div>
     );
