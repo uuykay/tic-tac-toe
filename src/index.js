@@ -107,7 +107,12 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    const winner_indexes = calculateWinner(current.squares);
+    let winner = null;
+    if (winner_indexes !== null) {
+      winner = current.squares[winner_indexes[0]];
+    }
+
     const no_moves_left = calculateNoMoves(current.squares);
     const isAscending = this.state.isAscending;
 
@@ -130,7 +135,11 @@ class Game extends React.Component {
     return (
       <div className="game">
         <div className="game-board">
-          <Board squares={current.squares} onClick={i => this.handleClick(i)} />
+          <Board
+            squares={current.squares}
+            onClick={i => this.handleClick(i)}
+            winners={winner_indexes}
+          />
         </div>
         <div className="game-info">
           <button onClick={() => this.handleToggle()}>Toggle Move Order</button>
