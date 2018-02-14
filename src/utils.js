@@ -38,3 +38,13 @@ export function determineRowCol(i) {
 
   return { row, col };
 }
+
+export function calculateNoMoves(squares) {
+  var no_moves = true;
+  for (let i = 0; i < squares.length; i++) {
+    if (squares[i] === null) {
+      no_moves = false;
+    }
+  }
+  return no_moves;
+}

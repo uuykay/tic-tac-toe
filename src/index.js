@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Board from "./board.js";
-import { calculateWinner, determineRowCol } from "./utils.js";
+import { calculateWinner, determineRowCol, calculateNoMoves } from "./utils.js";
 import "./index.css";
 
 class Game extends React.Component {
@@ -108,6 +108,7 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
+    const no_moves_left = calculateNoMoves(current.squares);
     const isAscending = this.state.isAscending;
 
     var moves = this.listMoves(history);
@@ -121,6 +122,8 @@ class Game extends React.Component {
     let status;
     if (winner) {
       status = `Winner: ${winner}`;
+    } else if (!winner && no_moves_left) {
+      status = "Draw: No Moves Left";
     } else {
       status = `Next player: ${this.state.xIsNext ? "X" : "O"}`;
     }
